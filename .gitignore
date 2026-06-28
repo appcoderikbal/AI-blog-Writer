@@ -1,9 +1,9 @@
 # Dependencies — never committed
-node_modules/
+ 
 
 # Vite build output — built by CI, not stored in Git
 # (GitHub Actions rebuilds on each release)
-assets/build/
+ 
 
 # Editor / OS
 .DS_Store
