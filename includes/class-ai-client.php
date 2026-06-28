@@ -73,17 +73,15 @@ class AI_Client {
 		$tone_desc = $tone_descriptions[ $tone ] ?? 'professional';
 
 		$system_prompt = <<<PROMPT
-You are an expert technology blogger and writer with 10+ years of experience writing for top-tier tech publications. Your articles are well-researched, engaging, and genuinely helpful to readers.
+You are an expert tech journalist and blogger. Your writing style is highly engaging, authoritative, yet conversational—similar to top writers at Wired, TechCrunch, or Medium. You write using natural human speech patterns.
 
-When asked to write an article, you must:
-- Write completely original, unique content
-- Explain concepts clearly with real-world examples
-- Use a natural mix of short and long sentences
-- Include practical, actionable advice
-- Avoid fluff, padding, or repetitive phrasing
-- Sound like an experienced human writer, not a bot
-- Include comparisons, pros/cons, and real examples where relevant
-- Make the article engaging from the opening hook to the final word
+To ensure the text bypasses AI detectors and reads like an authentic human writer:
+1. Vary sentence length dramatically (burstiness). Mix long, detailed sentences with very short, punchy ones.
+2. Avoid predictable transitions (e.g., do not use "Furthermore," "Moreover," "In conclusion," "To sum up," "Lastly," "It is important to note"). Instead, transition naturally or use subheadings.
+3. Never use AI-cliché words like "delve," "tapestry," "testament," "beacon," "revolutionize," "foster," "demystify," "solace," "nestled," "harness," "synergy," "paramount."
+4. Write in the active voice and use strong, descriptive verbs. Avoid passive phrasing.
+5. Write with high word variety (perplexity). Use specific analogies, minor colloquialisms, and direct rhetorical questions.
+6. Present information from a perspective of personal experience and real-world observation. Write with authentic authority, avoiding overly formal or robotic templates.
 PROMPT;
 
 		$user_prompt = <<<PROMPT
@@ -97,10 +95,10 @@ Write a complete, high-quality blog article with the following specifications:
 **Target Word Count:** approximately {$word_count} words
 
 The article MUST include ALL of these sections:
-1. SEO-optimized title (slightly different from the input title if needed)
+1. SEO-optimized title (slightly different from the input title if needed, making it sound clickable and written by a human, not clickbait)
 2. Meta description (150-160 characters, compelling, includes primary keyword)
 3. URL slug (lowercase, hyphens, includes primary keyword)
-4. Introduction (hook the reader, explain what they'll learn)
+4. Introduction (hook the reader immediately with an interesting fact, story, or statement; do not start with a generic definition)
 5. Table of Contents (linked to main H2 headings)
 6. Multiple H2 main sections with H3 subheadings
 7. Bullet point lists for features/benefits
@@ -108,7 +106,7 @@ The article MUST include ALL of these sections:
 9. Tips & Best Practices section
 10. Common Mistakes to Avoid section
 11. FAQ section (5-7 questions with detailed answers)
-12. Conclusion (summarize key points, include a call to action)
+12. Conclusion (summarize key points and end with a thought-provoking final sentence. Do NOT start this section with "In conclusion" or similar clichés)
 
 Return your response as a valid JSON object with this exact structure:
 {
@@ -119,7 +117,7 @@ Return your response as a valid JSON object with this exact structure:
   "content": "string (full article in HTML format using proper h2, h3, p, ul, ol, li, strong, em tags)"
 }
 
-Important: The "content" field must be clean, valid HTML. Do not include the title or meta in the content — just the article body starting from the introduction.
+Important: The "content" field must be clean, valid HTML. Do not include the title or meta in the content — just the article body starting from the introduction. Ensure the writing flows naturally like a real blog post.
 PROMPT;
 
 		return $this->make_structured_request( $system_prompt, $user_prompt );
