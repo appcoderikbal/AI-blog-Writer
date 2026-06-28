@@ -3,7 +3,7 @@
  * Plugin Name:       TechZapp AI Writer
  * Plugin URI:        https://techzapp.com/plugins/ai-writer
  * Description:       Generate high-quality technology blog posts using AI. Supports OpenAI, Groq, and Google Gemini. Discover trending topics, generate complete articles, edit, and save as WordPress drafts.
- * Version:           1.1.0
+ * Version:           1.0.0
  * Requires at least: 6.0
  * Tested up to:      6.7
  * Requires PHP:      8.0
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // ─── Plugin Constants ─────────────────────────────────────────────────────────
 
-define( 'TZAW_VERSION', '1.1.0' );
+define( 'TZAW_VERSION', '1.0.0' );
 define( 'TZAW_PLUGIN_FILE', __FILE__ );
 define( 'TZAW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TZAW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -40,7 +40,7 @@ define( 'TZAW_OPTION_KEY', 'tzaw_settings' );
 // The updater fetches update-info.json from the default branch of this repo.
 // Leave empty to disable automatic update checks.
 define( 'TZAW_GITHUB_REPO', 'appcoderikbal/AI-blog-Writer' );
-define( 'TZAW_UPDATE_URL', 'https://raw.githubusercontent.com/' . TZAW_GITHUB_REPO . '/main/update-info.json' );
+define( 'TZAW_UPDATE_URL', 'https://raw.githubusercontent.com/' . TZAW_GITHUB_REPO . '/master/update-info.json' );
 
 // ─── Autoloader ───────────────────────────────────────────────────────────────
 
