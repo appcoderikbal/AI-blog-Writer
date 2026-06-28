@@ -220,7 +220,7 @@ class Rest_Api {
 			return new \WP_Error(
 				$result->get_error_code(),
 				$result->get_error_message(),
-				[ 'status' => 422 ]
+				array_merge( [ 'status' => 422 ], (array) $result->get_error_data() )
 			);
 		}
 

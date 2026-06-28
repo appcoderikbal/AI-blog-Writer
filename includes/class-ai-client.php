@@ -260,6 +260,7 @@ PROMPT;
 					[ 'role' => 'system', 'content' => $system_prompt ],
 					[ 'role' => 'user', 'content' => $user_prompt ],
 				],
+				'response_format' => [ 'type' => 'json_object' ],
 			]
 		);
 
@@ -310,6 +311,7 @@ PROMPT;
 					[ 'role' => 'system', 'content' => $system_prompt ],
 					[ 'role' => 'user', 'content' => $user_prompt ],
 				],
+				'response_format' => [ 'type' => 'json_object' ],
 			]
 		);
 
@@ -367,8 +369,9 @@ PROMPT;
 					],
 				],
 				'generationConfig' => [
-					'temperature'     => 0.7,
-					'maxOutputTokens' => 8192,
+					'temperature'      => 0.7,
+					'maxOutputTokens'  => 8192,
+					'responseMimeType' => 'application/json',
 				],
 			]
 		);
