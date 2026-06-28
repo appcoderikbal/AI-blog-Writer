@@ -227,8 +227,10 @@ class Updater {
 			return $cached;
 		}
 
+		$url = TZAW_UPDATE_URL . '?t=' . time();
+
 		$response = wp_remote_get(
-			TZAW_UPDATE_URL,
+			$url,
 			[
 				'timeout'    => 15,
 				'user-agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
