@@ -20,7 +20,7 @@ class AI_Client {
 
 	// ─── API Endpoints ───────────────────────────────────────────────────────
 
-	private const OPENAI_URL = 'https://api.openai.com/v1/responses';
+	private const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 	private const GROQ_URL   = 'https://api.groq.com/openai/v1/chat/completions';
 
 	/**
@@ -189,10 +189,18 @@ PROMPT;
 			return $raw;
 		}
 
-		// Strip markdown code fences if the model wraps JSON in them.
-		$json_str = $raw;
-		if ( preg_match( '/```(?:json)?\s*([\s\S]+?)\s*```/i', $raw, $matches ) ) {
-			$json_str = $matches[1];
+		// Robust JSON extraction: Find the first '{' and the last '}'
+		$first_brace = strpos( $raw, '{' );
+		$last_brace  = strrpos( $raw, '}' );
+		$json_str    = $raw;
+
+		if ( false !== $first_brace && false !== $last_brace && $last_brace > $first_brace ) {
+			$json_str = substr( $raw, $first_brace, $last_brace - $first_brace + 1 );
+		} else {
+			// Fallback to strip markdown code fences if braces not found (unlikely)
+			if ( preg_match( '/```(?:json)?\s*([\s\S]+?)\s*```/i', $raw, $matches ) ) {
+				$json_str = $matches[1];
+			}
 		}
 
 		$decoded = json_decode( $json_str, true );
@@ -226,11 +234,11 @@ PROMPT;
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────
-	// OpenAI (Responses API)
+	// OpenAI (Chat Completions API)
 	// ─────────────────────────────────────────────────────────────────────────
 
 	/**
-	 * Send a request to the OpenAI Responses API.
+	 * Send a request to the OpenAI Chat Completions API.
 	 *
 	 * @param string $system_prompt System prompt.
 	 * @param string $user_prompt   User prompt.
@@ -247,8 +255,8 @@ PROMPT;
 
 		$body = wp_json_encode(
 			[
-				'model' => $model,
-				'input' => [
+				'model'    => $model,
+				'messages' => [
 					[ 'role' => 'system', 'content' => $system_prompt ],
 					[ 'role' => 'user', 'content' => $user_prompt ],
 				],
@@ -270,7 +278,7 @@ PROMPT;
 		return $this->parse_response(
 			$response,
 			static function ( array $data ): ?string {
-				return $data['output'][0]['content'][0]['text'] ?? null;
+				return $data['choices'][0]['message']['content'] ?? null;
 			}
 		);
 	}
