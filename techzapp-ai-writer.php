@@ -3,7 +3,7 @@
  * Plugin Name:       TechZapp AI Writer
  * Plugin URI:        https://techzapp.com/plugins/ai-writer
  * Description:       Generate high-quality technology blog posts using AI. Supports OpenAI, Groq, and Google Gemini. Discover trending topics, generate complete articles, edit, and save as WordPress drafts.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.0
  * Tested up to:      6.7
  * Requires PHP:      8.0
