@@ -220,8 +220,10 @@ class Updater {
 	 * @return array<string, mixed>|null
 	 */
 	private function get_remote_info(): ?array {
-		$cached = get_transient( self::CACHE_KEY );
-		if ( is_array( $cached ) ) {
+		$force_check = ! empty( $_GET['force-check'] ); // phpcs:ignore WordPress.Security.NonceVerification
+		$cached      = get_transient( self::CACHE_KEY );
+
+		if ( is_array( $cached ) && ! $force_check ) {
 			return $cached;
 		}
 
