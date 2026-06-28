@@ -1,0 +1,133 @@
+name: 🚀 Release Plugin
+
+# Triggers when you push a version tag: git tag v1.2.0 && git push --tags
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write  # Required to create GitHub Releases
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Parse version from tag ────────────────────────────────────────────
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=$TAG" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=v$TAG" >> $GITHUB_OUTPUT
+          echo "Releasing version: $TAG"
+
+      # ── 3. Node.js setup ─────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── 4. Install JS dependencies ───────────────────────────────────────────
+      - name: Install npm dependencies
+        run: npm ci
+
+      # ── 5. Build React frontend ──────────────────────────────────────────────
+      - name: Build frontend (Vite)
+        run: npm run build
+
+      # ── 6. Validate update-info.json version matches the tag ─────────────────
+      - name: Validate version consistency
+        run: |
+          JSON_VERSION=$(jq -r '.version' update-info.json)
+          TAG_VERSION="${{ steps.version.outputs.VERSION }}"
+          if [ "$JSON_VERSION" != "$TAG_VERSION" ]; then
+            echo "❌ Version mismatch: update-info.json has '$JSON_VERSION' but tag is 'v$TAG_VERSION'"
+            echo "   Please update update-info.json before tagging."
+            exit 1
+          fi
+          echo "✅ Version $JSON_VERSION matches tag v$TAG_VERSION"
+
+      # ── 7. Create distributable zip ──────────────────────────────────────────
+      - name: Create plugin zip
+        run: |
+          PLUGIN_DIR="techzapp-ai-writer"
+          mkdir -p "dist/$PLUGIN_DIR/assets"
+
+          # Copy PHP files
+          cp techzapp-ai-writer.php "dist/$PLUGIN_DIR/"
+          cp uninstall.php          "dist/$PLUGIN_DIR/"
+          cp readme.txt             "dist/$PLUGIN_DIR/"
+          cp update-info.json       "dist/$PLUGIN_DIR/"
+
+          # Copy PHP class files
+          cp -r includes "dist/$PLUGIN_DIR/"
+
+          # Copy built frontend assets (NOT src/, node_modules/, etc.)
+          cp -r assets/build "dist/$PLUGIN_DIR/assets/build"
+
+          # Create the zip
+          cd dist
+          zip -r "techzapp-ai-writer.zip" "$PLUGIN_DIR/"
+          cd ..
+
+          echo "📦 Plugin zip created:"
+          ls -lh dist/techzapp-ai-writer.zip
+          echo ""
+          echo "📁 Zip contents:"
+          unzip -l dist/techzapp-ai-writer.zip
+
+      # ── 8. Extract changelog for release notes ───────────────────────────────
+      - name: Extract changelog
+        id: changelog
+        run: |
+          # Pull the changelog section from update-info.json and strip HTML tags
+          CHANGELOG=$(jq -r '.sections.changelog // "No changelog provided."' update-info.json | sed 's/<[^>]*>//g' | head -50)
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      # ── 9. Publish GitHub Release ─────────────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.TAG_NAME }}
+          name: TechZapp AI Writer v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## 🚀 TechZapp AI Writer v${{ steps.version.outputs.VERSION }}
+
+            ### What's Changed
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ---
+
+            ### 📥 Installation / Update
+
+            **New install:**
+            1. Download `techzapp-ai-writer.zip` below
+            2. WordPress Admin → Plugins → Add New → Upload Plugin
+            3. Activate and configure your API key in Settings
+
+            **Existing users:**
+            WordPress will show an automatic update notice within 12 hours, or you can trigger it immediately via Dashboard → Updates → Check Again.
+
+            ---
+            *Built automatically from tag `${{ steps.version.outputs.TAG_NAME }}`*
+          files: dist/techzapp-ai-writer.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 10. Summary ──────────────────────────────────────────────────────────
+      - name: Release summary
+        run: |
+          echo "✅ Released TechZapp AI Writer v${{ steps.version.outputs.VERSION }}"
+          echo "🔗 https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.TAG_NAME }}"

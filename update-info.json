@@ -1,0 +1,13 @@
+{
+  "version": "1.1.0",
+  "requires": "6.0",
+  "tested": "6.7",
+  "requires_php": "8.0",
+  "download_url": "https://github.com/appcoderikbal/AI-blog-Writer/releases/download/v1.1.0/techzapp-ai-writer.zip",
+  "last_updated": "2026-06-28",
+  "sections": {
+    "description": "<p>TechZapp AI Writer helps you generate high-quality technology blog posts using AI. Supports OpenAI, Groq, and Google Gemini.</p>",
+    "changelog": "<h4>1.1.0 — 2026-06-28</h4><ul><li>Added multi-provider AI support: Groq and Google Gemini</li><li>Provider switcher in Settings with per-provider API key management</li><li>Fixed CSS loading in WordPress admin</li><li>Added GitHub-based automatic update system</li></ul><h4>1.0.0</h4><ul><li>Initial release</li><li>Dashboard with trending topics from Hacker News, GitHub, Reddit, Dev.to</li><li>AI article generation with configurable tone, word count, and audience</li><li>Rich text editor with improve/expand/shorten AI actions</li><li>Save as WordPress draft</li></ul>",
+    "installation": "<ol><li>Download the plugin zip from GitHub Releases</li><li>Upload to WordPress via Plugins → Add New → Upload Plugin</li><li>Activate the plugin</li><li>Go to TechZapp AI Writer → Settings and add your API key</li></ol>"
+  }
+}

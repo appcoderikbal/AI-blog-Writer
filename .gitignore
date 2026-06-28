@@ -1,0 +1,17 @@
+# Dependencies — never committed
+node_modules/
+
+# Vite build output — built by CI, not stored in Git
+# (GitHub Actions rebuilds on each release)
+assets/build/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+*.swp
+
+# Environment files
+.env
+.env.local
